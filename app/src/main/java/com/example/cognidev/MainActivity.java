@@ -1,6 +1,5 @@
 package com.example.cognidev;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -50,37 +49,34 @@ public class MainActivity extends AppCompatActivity {
                 final CashbackService cashbackService = new CashbackService();
                 Call<CreateResponse> call = cashbackService.getLoginResponse(jsonObject);
 
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                startActivity(intent);
-//                call.enqueue(new Callback<CreateResponse>() {
-//                    @Override
-//                    public void onResponse(Call<CreateResponse> call, Response<CreateResponse> response) {
-//                        if (response.code() == 201) {
-//                            Log.e("TAG", "response 33: " + response.body().getUser().getUuid());
-//
-//                            String token = response.headers().get("Token");
-//
-//
-//                            SharedPreferences.Editor editor = sharedPref.edit();
-//                            editor.putString("token", token);
-//                            editor.commit();
-//
-//                            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-//                            startActivity(intent);
-//
-//                        } else {
-//                            Toast toast = Toast.makeText(getApplicationContext(), "Please use new username or email", Toast.LENGTH_LONG);
-//                            toast.show();
-//                            toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 200);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<CreateResponse> call, Throwable t) {
-//                        Log.e("TAG", "onFailure: "+ t.toString() );
-//
-//                    }
-//                });
+                call.enqueue(new Callback<CreateResponse>() {
+                    @Override
+                    public void onResponse(Call<CreateResponse> call, Response<CreateResponse> response) {
+                        if (response.code() == 201) {
+                            Log.e("TAG", "response 33: " + response.body().getUser().getUuid());
+
+                            String token = response.headers().get("Token");
+
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("token", token);
+                            editor.apply();
+
+                            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                            startActivity(intent);
+
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), "Please use new username or email", Toast.LENGTH_LONG);
+                            toast.show();
+                            toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 200);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CreateResponse> call, Throwable t) {
+                        Log.e("TAG", "onFailure: "+ t.toString() );
+
+                    }
+                });
             }
         });
     }
